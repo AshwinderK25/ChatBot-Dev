@@ -1,0 +1,29 @@
+%cd ChatBot-Dev/ChatBot
+
+%%writefile requirements.txt
+Flask==0.12.2
+flask-socketio
+eventlet==0.17.4
+gunicorn==18.0.0
+
+import nltk
+nltk.download('punkt')
+nltk.download('stopwords')
+nltk.download('wordnet')
+
+get_ipython().system_raw(
+    'pip3 install -r requirements.txt && python3 main.py > logs.txt 2>&1 &'
+)
+
+
+!tail logs.txt
+
+!wget https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-amd64.zip
+!unzip ngrok-stable-linux-amd64.zip
+
+
+get_ipython().system_raw('./ngrok http 5000 -host-header localhost:5000 &')
+
+!curl -s http://localhost:4040/api/tunnels | python3 -c \
+    "import sys, json; print(json.load(sys.stdin)['tunnels'][0]['public_url'])"
+
